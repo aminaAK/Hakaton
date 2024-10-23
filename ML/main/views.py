@@ -5,6 +5,13 @@ import folium
 
 
 def index(request):
+    datapoints = [
+        { "label": "Online Store",  "y": 27  },
+        { "label": "Offline Store", "y": 25  },        
+        { "label": "Discounted Sale",  "y": 30  },
+        { "label": "B2B Channel", "y": 8  },
+        { "label": "Others",  "y": 10  }
+    ]
     data = {
         "calories": [420, 380, 390,400,5000,600,400,200,420, 380, 390,400,5000,600,400,200],
         "duration": [50, 40, 45,12,12,12,12,12,50, 40, 45,12,12,12,12,12],
@@ -31,7 +38,7 @@ def index(request):
     for _, row in df.iterrows():
         add_tack(row["lat"], row["lon"], row["city"], row["fias_level"], mapa)
     mapa = mapa._repr_html_()
-    context={'map': mapa, 'df': df_gb}
+    context={'map': mapa, 'df': df_gb, "datapoints" : datapoints}
     return render(request, 'main/index.html', context)
 
 def download(request):

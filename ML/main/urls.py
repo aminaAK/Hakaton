@@ -3,5 +3,5 @@ from django.urls import path
 
 urlpatterns = [
     path('', views.index, name="index"),
-    path('download/', views.download, name="download")
+    path('download/', views.download, name="download"),
 ]

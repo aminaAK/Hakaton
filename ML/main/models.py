@@ -13,3 +13,7 @@ class Choice(models.Model):
 
 class MyFiles(models.Model):
     file = models.FileField(upload_to = 'upldfile/')
+
+class Row(models.Model):
+    num = models.IntegerField()
+

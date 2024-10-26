@@ -4,9 +4,9 @@ import datetime
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
-from input_file_preprocessing import preproc_delivery_time
+from .input_file_preprocessing import preproc_delivery_time
 
-file_path = 'processed_Исторические_данные_по_офертам_поставщиков_на_лот.csv'
+file_path = 'main/processed_new_Исторические_данные_по_офертам_поставщиков_на_лот.csv'
 data = pd.read_csv(file_path)
 
 manual_lot_count = 4996
@@ -68,9 +68,9 @@ MQ = 0.5 * ((1 - num_lots / manual_lot_count) + (1 - manual_avg_price / average_
 
 MS = (2 * average_creditors_le_50 + 3 * average_creditors_50_to_80 + 4 * average_creditors_ge_80) / average_creditors_per_lot
 
-data_input = pd.read_excel('Test_input_file.xlsx')
-df_mtr = pd.read_excel('Кабель справочник МТР.xlsx')
-df_deliv = pd.read_excel('КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
+data_input = pd.read_excel('main/Test_input_file.xlsx')
+df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
+df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
 
 data_final = preproc_delivery_time(data_input, df_mtr, df_deliv)
 
@@ -91,4 +91,13 @@ for i in range(len(data_final)):
 #lots[i][1] -- одит датафрейм или лист из датафреймов, лоты для каждой заявки
 #lots[i][1][j] -- конкретная строка внутри лота
 
-print(type(lots))
+# for i in range(1):
+#     for j in range(5):
+#      print(type(lots[i][0][j]))
+# req = pd.DataFrame(len(lots))
+# for i in range(len(lots)):  
+#     req[i] = lots[i][0]
+# print(req)
+
+def Lot():
+    return lots

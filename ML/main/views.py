@@ -1,8 +1,9 @@
 from django.shortcuts import render
 import pandas as pd
-from .models import MyFiles
+from .models import MyFiles, Row
 import folium
-from .test import result
+from .Tables import table, request_lot
+from .hacaton import Lot
 
 
 def index(request):
@@ -13,19 +14,15 @@ def index(request):
         { "label": "B2B Channel", "y": 8  },
         { "label": "Others",  "y": 10  }
     ]
-    data = {
-        "calories": [420, 380, 390,400,5000,600,400,200,420, 380, 390,400,5000,600,400,200],
-        "duration": [50, 40, 45,12,12,12,12,12,50, 40, 45,12,12,12,12,12],
-        "name": ['Amina', 'Alex', 'Anton', 'Amina', 'Alex', 'Anton','Alex', 'Alex','Amina', 'Alex', 'Anton', 'Amina', 'Alex', 'Anton','Alex', 'Alex'],
-        "skills": ['web', 'ml', 'python','web', 'ml', 'python','web', 'ml','web', 'ml', 'python','web', 'ml', 'python','web', 'ml'],
-        "hollydays": [15, 24, 35, 15, 24, 35, 15, 24,15, 24, 35, 15, 24, 35, 15, 24],
 
-    }
-    df_gb = pd.DataFrame(data)
-    test = result(data).get_data()
-   
+    lots = table()
 
-    # context = {'df': df_gb}
+    
+
+ 
+
+
+    # --------------- map --------------
     df1 = pd.read_csv("main/city.csv")
     df = df1[["city", "fias_level", "geo_lat", "geo_lon"]]
     df = df.rename({"geo_lat":"lat", "geo_lon":"lon"}, axis=1)
@@ -41,8 +38,12 @@ def index(request):
     for _, row in df.iterrows():
         add_tack(row["lat"], row["lon"], row["city"], row["fias_level"], mapa)
     mapa = mapa._repr_html_()
-    context={'map': mapa, 'df': df_gb, "datapoints" : datapoints, 'test': test}
+    # --------------- map --------------
+
+
+    context={'map': mapa, 'df': lots, "datapoints" : datapoints}
     return render(request, 'main/index.html', context)
+
 
 def download(request):
     if request.POST:
@@ -51,6 +52,9 @@ def download(request):
         file = request.FILES.get('file')
     )
     return render(request, 'main/download.html')
+
+def tables(request):
+    return render(request, 'main/tables.html')
 
     
 

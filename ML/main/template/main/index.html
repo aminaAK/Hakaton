@@ -122,8 +122,32 @@
        
         <!-- <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A6c42a601c9e06f6a7ea2fa145d3b406042247a23973491d378587583f306830a&amp;width=100%25&amp;height=240&amp;lang=ru_RU&amp;scroll=true"></script> -->
         
-      
-          {{map|safe}}
+        {{map|safe}}
+     
+        <table class="table table-hover" id="myTable">
+          <thead>
+              <tr>
+                  {% for col in test.columns %}
+                      <th scope="col">
+                          {{col}}
+                      </th>
+                  {% endfor %}
+              </tr>
+          </thead>
+          
+          <tbody>
+              {% for index, row in test.iterrows %}
+                  <tr>
+                  {% for cell in row %}
+                      <td>
+                          {{cell}}
+                      </td>
+                  {% endfor %}
+                  </tr>
+              {% endfor %}
+          </tbody>
+        
+      </table>
         
         
     </div>

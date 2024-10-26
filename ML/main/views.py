@@ -2,6 +2,7 @@ from django.shortcuts import render
 import pandas as pd
 from .models import MyFiles
 import folium
+from .test import result
 
 
 def index(request):
@@ -21,6 +22,8 @@ def index(request):
 
     }
     df_gb = pd.DataFrame(data)
+    test = result(data).get_data()
+   
 
     # context = {'df': df_gb}
     df1 = pd.read_csv("main/city.csv")
@@ -33,12 +36,12 @@ def index(request):
             tooltip=text,
             radius = 200/level
         ).add_to(map)
-
-    mapa = folium.Map(location=(55., 37.), width='100%', height='40%') #Москва
+    f = folium.Figure(width='100%', height= 400)
+    mapa = folium.Map(location=(55., 37.)).add_to(f) #Москва
     for _, row in df.iterrows():
         add_tack(row["lat"], row["lon"], row["city"], row["fias_level"], mapa)
     mapa = mapa._repr_html_()
-    context={'map': mapa, 'df': df_gb, "datapoints" : datapoints}
+    context={'map': mapa, 'df': df_gb, "datapoints" : datapoints, 'test': test}
     return render(request, 'main/index.html', context)
 
 def download(request):
@@ -49,8 +52,6 @@ def download(request):
     )
     return render(request, 'main/download.html')
 
-# def map(request):
-#     return render(request, 'main/map.html')
     
 
 

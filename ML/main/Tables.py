@@ -14,7 +14,9 @@ def table():
 def request_lot(i):    
     data = Lot()
     return(data[i][0])
-
+def lots_from_requaest(i):    
+    data = Lot()
+    return(data[i][1])
  
 
- 
+  

@@ -2,7 +2,7 @@ from django.shortcuts import render
 import pandas as pd
 from .models import MyFiles, Row
 import folium
-from .Tables import table, request_lot
+from .Tables import table, request_lot, lots_from_requaest
 from .hacaton import Lot
 
 
@@ -17,10 +17,13 @@ def index(request):
 
     lots = table()
 
+
     
-
- 
-
+    if request.method == 'POST':
+        row = request.POST['row'].split()
+        row_id = int(row[1]) 
+        tables(request, row_id)
+        return tables(request, row_id)
 
     # --------------- map --------------
     df1 = pd.read_csv("main/city.csv")
@@ -53,8 +56,10 @@ def download(request):
     )
     return render(request, 'main/download.html')
 
-def tables(request):
-    return render(request, 'main/tables.html')
+def tables(request, id):
+    req = request_lot(id)
+    lots = lots_from_requaest(id)
+    return render(request, 'main/tables.html', {'data':req, 'id':id, 'lots':lots})
 
     
 

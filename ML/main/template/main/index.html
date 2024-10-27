@@ -114,10 +114,16 @@
                             {{cell}}
                         </td>
                     {% endfor %}
-                        <td><a href="{% url 'tables' %}">Открыть</a>
-                        <form method="POST" action="">
-                        {% csrf_token %}
-                        <input type='hidden' name='row' value='{$row}' />
+                        
+                        <td>
+                          <form method="POST" action="">
+                            {% csrf_token %}
+          
+                            <input type="hidden"  name='row' value='{{ row }}'/>
+                            <button class="btn btn-outline-success" type="submit">Открыть</button>
+                            
+                            <!-- <a href="{% url 'tables' %}">Открыть</a> -->
+                      
                         </form>
                         </td>
                     </tr>

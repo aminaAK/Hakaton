@@ -9,10 +9,18 @@ Original file is located at
 
 import pandas as pd
 import datetime
-
-df_in = pd.read_excel('main/Test_input_file.xlsx')
-df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
-df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
+# try:
+#   # s = ''
+#   # for _, _, files in os.walk('.'):
+#   #     for f in files:
+#   #         if (f.split('-')[0] == 'Test') and (f.split('-')[1] == 'input'):
+#   #             s = f
+#   # data_input = pd.read_excel('main/media/upldfile/' + s)
+#   data_input = pd.read_excel('./media/' + name)
+# except:
+#   df_in = pd.DataFrame([])
+# df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
+# df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
 
 def preproc_delivery_time(
     df_in: 'pd.DataFrame',
@@ -62,7 +70,7 @@ def preproc_delivery_time(
       res.loc[ind, 'Ошибка'] = 2
   return res
 
-df_in_preprocessed = preproc_delivery_time(df_in, df_mtr, df_deliv)
+# df_in_preprocessed = preproc_delivery_time(df_in, df_mtr, df_deliv)
 
 #print(df_in_preprocessed.sample(5))
 #print(df_in_preprocessed[df_in_preprocessed['Ошибка'] > 0])

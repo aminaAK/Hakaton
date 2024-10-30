@@ -5,8 +5,9 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from .input_file_preprocessing import preproc_delivery_time
+import os
 
-def Lot():
+def Lot(name):
     file_path = 'main/processed_new_Исторические_данные_по_офертам_поставщиков_на_лот.csv'
     data = pd.read_csv(file_path)
 
@@ -68,8 +69,18 @@ def Lot():
     MQ = 0.5 * ((1 - num_lots / manual_lot_count) + (1 - manual_avg_price / average_price_per_lot))
 
     MS = (2 * average_creditors_le_50 + 3 * average_creditors_50_to_80 + 4 * average_creditors_ge_80) / average_creditors_per_lot
+    try:
+        # s = ''
+        # for _, _, files in os.walk('./media/upldfile/'):
+        #     for f in files:
+        #         if (f.split('_')[0] == 'Test') and (f.split('_')[1] == 'input'):
+        #             s = f
+        #         print(f)
+        # data_input = pd.read_excel('./media/upldfile/' + s)
+        data_input = pd.read_excel('./media/' + name)
+    except:
+        data_input = pd.DataFrame([])
 
-    data_input = pd.read_excel('main/Test_input_file.xlsx')
     df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
     df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
 
@@ -90,6 +101,10 @@ def Lot():
     #lots[i] -- одна заявка и все лоты для нее
     #lots[i][0] -- датафрейм из 1 строки, сама заявка
     #lots[i][1] -- одит датафрейм или лист из датафреймов, лоты для каждой заявки
-    #lots[i][1][j] -- конкретная строка внутри лота
+    #lots[i][1][j] -- конкретный лот
 
+    # for i in range(len(lots)):
+    #     for j in range(len(lots[i][1])):
+    #         lots[i][1][j] = lots[i][1][j]['cluster']
+    
     return lots

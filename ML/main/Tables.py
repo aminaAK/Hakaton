@@ -3,7 +3,7 @@ import numpy as np
 from .hacaton import Lot
 
 def table():    
-    data = Lot()
+    data = Lot(name)
     req = []
     for i in range(len(data)):
         lot = data[i]

@@ -74,33 +74,40 @@
     <p></p>
     <div class="container-fluid">
         <div class="data">
-            <h3>Заявка №{{id}}</h3>
+            <h3>Лот №{{id}}</h3>
             <p></p>
             <table class="table table-hover" id="myTable">
-                
-                <tbody>
-        
-                    {% for index, cell in data.items %}
-                    <tr>
-                    
-                        <th>
-                            {{index}}
-                        </th>
-                        <td>
-                            {{cell}}
-                        </td>
- 
-                    </tr>
-                {% endfor %}
-            </tbody>
-
-            </table>  
+              <thead>
+                  <tr>
+                      {% for col in lot.columns %}
+                          <th scope="col">
+                              {{col}}
+                          </th>
+                      {% endfor %}
+                  </tr>
+              </thead>
+              
+              <tbody>
+                  {% for index, row in lot.iterrows %}
+                      <tr>
+                      {% for cell in row %}
+                          <td>
+                              {{cell}}
+                          </td>
+                      {% endfor %}
+                       
+                      </tr>
+                  {% endfor %}
+              </tbody>
+            
+          </table> 
+            
         </div>
         <div class="space">
         </div>
-        <h3>Лоты заявки</h3>
+        <!-- <h3>Лоты заявки</h3>
         <div class="space">
-        </div>
+        </div> -->
         <!-- <hr style="color:rgb(210, 210, 210); border-width: 15px;"> -->
         <div class="row">
             <div class="col-2">

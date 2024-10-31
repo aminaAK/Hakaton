@@ -18,8 +18,8 @@ def index(request):
     data = Lot(name)
     req = []
     for i in range(len(data)):
-        lot = data[i]
-        req.append([i,lot[0].iloc[15],lot[0].iloc[12],lot[0].iloc[17]]) 
+        lot = data[i]  #лот
+        req.append([i,lot.iloc[15],lot.iloc[12],lot.iloc[17]]) 
     
     lots = pd.DataFrame(req, columns=['№', 'Дата','Способ закупки', 'Доставка'])
 
@@ -51,7 +51,7 @@ def index(request):
     # --------------- map --------------
 
     #------------------- input file plots ---------------------------
-    data_input = pd.read_excel('main/Test_input_file.xlsx')   ####change!!!
+    data_input = pd.read_excel('./media/'+name)   ####change!!!
     data_input['Год заявки'] = 0
     data_input['Год заявки'] = 0
     for i in data_input.index:
@@ -142,7 +142,7 @@ def download(request):
         name = f.file.name
 
     if name != "":
-        print('пошел процесс', name)
+    
         #------------------- input file plots ---------------------------
         data_input = pd.read_excel('./media/'+name)   ####changed
         data_input['Год заявки'] = 0
@@ -234,13 +234,12 @@ def download(request):
 
 def tables(request, id):
     data = Lot(name)
-    req = data[id][0]
-    lots = data[id][1]
-    return render(request, 'main/tables.html', {'data':req, 'id':id, 'lots':lots})
+  
+    lot = data[id]
+    return render(request, 'main/tables.html', {'id':id, 'lot':lot})
 
 
 def download_file(request, name):
-    file_path = name
     if os.path.exists(name):
         with open(name, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/xlsx")

@@ -14,7 +14,7 @@ def lots_distr(input_path, metr=False):
     
     
     #change these paths to your local ones when adding!
-    hist_path = 'main/data/Исторические_совершенные_закупки_товаров.csv'
+    hist_path = 'main/data/processed_Исторические_совершенные_закупки_товаров.csv'
     df_mtr = pd.read_excel('main/data/Кабель справочник МТР.xlsx')
     df_deliv = pd.read_excel('main/data/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
     df_cargo = pd.read_excel('main/data/Справочник грузополучателей.xlsx')

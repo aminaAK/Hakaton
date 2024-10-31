@@ -1,10 +1,7 @@
 import pandas as pd
 import folium
 
-cities = pd.read_csv("cwc.csv")
-buyers = pd.read_csv("clients.csv")
-creditors = pd.read_excel("suppliers_with_city.xlsx")
-
+clients = pd.read_csv("clients_with_location.csv")
 def add_tack(lat, lon, text, map, radius=20, fill_color='blue'):
     #popup - при нажатии, tooltip - при наведении
     folium.CircleMarker(
@@ -17,35 +14,24 @@ def add_tack(lat, lon, text, map, radius=20, fill_color='blue'):
     ).add_to(map)
 
 def buyer_coords(buyer_id):
-    try:
-        city = buyers[buyers["buyer"] == buyer_id]["city"].values[0]
-    except:
-        print(f'\033[91mАдрес покупателя {buyer_id} отсутствует в базе')  # \033[91m делает текст красным
-        return None, None
-    lat, lon = cities[cities["city"] == city.lower()][['lat', 'lon']].values[0]
+    lat, lon = clients[clients["buyer_id"]==buyer_id][['lat', 'lon']].values[0]       
     return lat, lon
 
-def creditor_coords(creditor_id):
-    try:
-        city = creditors[creditors["Кредитор"] == creditor_id]["Город"].values[0]
-    except:
-        print(f'\033[91mАдрес кредитора {creditor_id} отсутствует в базе')  # \033[91m делает текст красным
-        return None, None
-    lat, lon = cities[cities["city"] == city.lower()][['lat', 'lon']].values[0]
-    return lat, lon
-
-def add_locations(buyers: pd.Series, creditors: pd.Series, map):
+def add_locations(buyers: pd.Series, map):
     for buyer_id in buyers:
         lat, lon = buyer_coords(buyer_id)
-        add_tack(lat, lon, f"Грузополучатель {buyer_id}", map, fill_color='red')
+        if (lat is None or lon is None):
+            print('\033[91m', f'Местоположение грузополучателя {buyer_id} отсутствует в базе','\033[0m')
+        else:            
+            add_tack(lat, lon, f"Грузополучатель {buyer_id}", map, fill_color='red')
 
-    for creditor_id in creditors:
-        lat, lon = creditor_coords(creditor_id)
-        add_tack(lat, lon, f"Поставщик {creditor_id}", map, fill_color='blue')
-        
-    
-mapa = folium.Map(location=(55., 37.), attributionControl=0) #Москва
-
-add_locations(pd.Series([20000770, 8536, 20000751]), pd.Series(["11", "47"]), mapa)
-
-mapa.show_in_browser()
+def lot_map(lot: pd.DataFrame) -> str:
+    '''
+    Принимает DataFrame из заявок
+    Отмечает всех грузополучателей красными кругами на карте
+    Возвращает html-код карты в виде строки
+    '''
+    buyers = lot["Грузополучатель"]
+    mapa = folium.Map(location=(67., 93.), zoom_start=3, attributionControl=0)
+    add_locations(buyers, mapa)
+    return mapa._repr_html_()

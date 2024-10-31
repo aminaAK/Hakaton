@@ -80,7 +80,7 @@ def lots_distr(input_path, metr=False):
                 for j in range(len(data_entries)):
                     data_orig = data_entries[j]
                     data_prepr = prepr_entries[j]
-                    optimised_data = optim_clust(data_orig, data_prepr)
+                    optimised_data = optim_clust(data_orig, data_prepr, metr)
                     
                     if optimised_data is not None:
                         for num in optimised_data['cluster'].unique():
@@ -91,7 +91,7 @@ def lots_distr(input_path, metr=False):
             else:
                 data_orig = data_entries
                 data_prepr = prepr_entries
-                optimised_data = optim_clust(data_orig, data_prepr)
+                optimised_data = optim_clust(data_orig, data_prepr, metr)
                 
                 if optimised_data is not None:
                     for num in optimised_data['cluster'].unique():
@@ -110,7 +110,3 @@ def lots_distr(input_path, metr=False):
         return lots, metr_dict
     else:
         return data
-
-input_path = 'Test_input_file.xlsx'    
-data, m = lots_distr(input_path, True)
-print(data, m)

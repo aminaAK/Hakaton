@@ -250,7 +250,10 @@ def optim_clust(data_orig, data_prepr, metrics=False):
                 print(f"Error clustering with k={k}: {e}")
                 continue
     else:
-        k_best = 1
+        if len(data_orig) == 1:
+            k_best = 1
+        else:
+            k_best = data_prepr['Код класса МТР'].nunique()
         data_best = sell_cluster(data_orig, data_prepr, k_best, metrics=metrics)
 
     if data_best is None:

@@ -17,13 +17,13 @@ name = ''
 
 def index(request):
     
-    data = lots_distr(name)
+    data = lots_distr('./media/'+name)
     req = []
     for i in range(len(data)):
         lot = data[i]  #лот
-        req.append([i,lot.iloc[15],lot.iloc[12],lot.iloc[17]]) 
+        req.append([i,lot['Дата заказа'].values[0],lot['Код класса МТР'].values[0],lot['Клиент'].values[0]]) 
     
-    lots = pd.DataFrame(req, columns=['№', 'Дата','Способ закупки', 'Доставка'])
+    lots = pd.DataFrame(req, columns=['№', 'Дата заказа','Код класса МТР', 'Клиент'])
 
 
     
@@ -243,10 +243,12 @@ def download(request):
 #     os.remove('./media' + name)
 
 def tables(request, id):
-    data = lots_distr(name)
-    lot = data[id]
-    mapa = lot_map(lot)
-    return render(request, 'main/tables.html', {'map':mapa, 'id':id, 'lot':lot})
+    data = lots_distr("./media/"+name)
+    if name!='':
+        lot = data[id]
+        mapa = lot_map(lot)
+        return render(request, 'main/tables.html', {'map':mapa, 'id':id, 'lot':lot})
+    else: return render(request, 'main/index.html')
 
 
 def download_file(request, f):

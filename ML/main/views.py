@@ -6,8 +6,10 @@ from .models import MyFiles
 import folium
 # from .Tables import  request_lot, lots_from_requaest
 from .hacaton import Lot
+from .geo import lot_map
 import os
 import datetime #added by rita!
+from .input_file_preprocessing import preproc_delivery_time
 
 
 
@@ -140,6 +142,14 @@ def download(request):
             file = request.FILES.get('file')
         )
         name = f.file.name
+        data_input = pd.read_excel('./media/'+name) #здесь должен быть входной файл!!!
+        df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
+        df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
+        df_cargo = pd.read_excel('main/Справочник грузополучателей.xlsx')
+
+        df_errors = preproc_delivery_time(data_input, df_mtr, df_deliv, df_cargo)
+        df_errors[df_errors['Ошибка'] > 0].to_excel('media/upldfile/Ошибочные_заявки.xlsx')
+        print(name)
 
     if name != "":
     
@@ -218,13 +228,12 @@ def download(request):
         #------------------- input file plots ---------------------------
 
     if request.method == 'POST' and 'run_script_download' in request.POST:
-        return download_file(request, './media/'+name)
+        return download_file(request, './media/upldfile/'+'Ошибочные_заявки.xlsx')
     
         
     if name =="":
      context={"name": name}
     else:
-
      context={"name": name, "data1": data_1, "data2": data_2, "data3": data_3, "data4": data_4, "data5": data_5, "data6": data_6}
 
     return render(request, 'main/download.html', context)
@@ -239,11 +248,11 @@ def tables(request, id):
     return render(request, 'main/tables.html', {'id':id, 'lot':lot})
 
 
-def download_file(request, name):
-    if os.path.exists(name):
-        with open(name, 'rb') as fh:
+def download_file(request, f):
+    if os.path.exists(f):
+        with open(f, 'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/xlsx")
-            response['Content-Disposition'] = 'inline; filename=' + name
+            response['Content-Disposition'] = 'inline; filename=' + f
             return response
     raise Http404
     

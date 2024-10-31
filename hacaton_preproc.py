@@ -49,6 +49,7 @@ def time_borders(df):
     Output: res - A list of DataFrames, where each element contains requests grouped by the same request month and delivery month
     '''
     res = []
+    df = df.copy()
     df['Даты: заявка, поставка'] = 0
     
     # Create a new column for the request month and delivery month pair
@@ -249,7 +250,7 @@ def optim_clust(data_orig, data_prepr, metrics=False):
                 print(f"Error clustering with k={k}: {e}")
                 continue
     else:
-        k_best = max_k
+        k_best = 1
         data_best = sell_cluster(data_orig, data_prepr, k_best, metrics=metrics)
 
     if data_best is None:

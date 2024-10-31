@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime
 import os
+from sklearn.preprocessing import LabelEncoder
 from hacaton_preproc import class_cluster, time_borders, dist_cluster, sell_cluster, optim_clust
 from hacaton_preproc import preproc_delivery_time, construct_column_from_lookup
 
@@ -25,7 +26,7 @@ def lots_distr(input_path, metr=False):
     data['lat'] = data['Код класса МТР'].copy()
     data['lon'] = data['Код класса МТР'].copy()
 
-    data_preprocessed['Дата заявки'] = data['Дата заявки'].copy()
+    data_preprocessed['Дата заказа'] = data['Дата заказа'].copy()
     data_preprocessed['Срок поставки'] = data['Срок поставки'].copy()
 
     #make clusters from MTR class as dict = {'Class': Dataframe}
@@ -48,8 +49,6 @@ def lots_distr(input_path, metr=False):
         for i in range(len(datasets[Class])):
             ds_dist[Class][i], cluster_labels, errors, error_index = dist_cluster(ds_dist[Class][i], cords_path, clients_path)
             error_lines.append(errors)
-            print(ds_dist[Class][i])
-            print(ds_pr_dist[Class][i])
             ds_pr_dist[Class][i] = ds_pr_dist[Class][i].reset_index(drop=True)
             ds_pr_dist[Class][i] = ds_pr_dist[Class][i].drop(index=error_index)
             ds_pr_dist[Class][i]['dist'] = cluster_labels
@@ -103,5 +102,6 @@ def lots_distr(input_path, metr=False):
     #delete redundant columns
     for i in range(len(lots)):
         lots[i] = lots[i].drop(columns=['dist', 'cluster'])
-        
-    return data
+
+    
+    return lots

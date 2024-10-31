@@ -104,4 +104,4 @@ def lots_distr(input_path, metr=False):
         lots[i] = lots[i].drop(columns=['dist', 'cluster'])
 
     
-    return data
+    return lots

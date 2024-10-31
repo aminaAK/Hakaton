@@ -49,7 +49,8 @@ def time_borders(df):
     Output: res - A list of DataFrames, where each element contains requests grouped by the same request month and delivery month
     '''
     res = []
-    df['Даты: заявка, поставка'] = 0
+    df = df.copy()
+    df.loc[:, 'Даты: заявка, поставка'] = 0
     
     # Create a new column for the request month and delivery month pair
     for ind in df.index:

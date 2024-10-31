@@ -19,22 +19,34 @@ def buyer_coords(buyer_id):
     return lat, lon
 
 def add_locations(buyers: pd.Series, map, color='red', add_text='') -> None:
+    marked_locations = dict()
     for buyer_id in buyers:
         lat, lon = buyer_coords(buyer_id)
         if (lat is None or lon is None):
             print('\033[91m', f'Местоположение грузополучателя {buyer_id} отсутствует в базе','\033[0m')
-        else:            
-            add_tack(lat, lon, f"Грузополучатель {buyer_id}" + '\n' + add_text, map, fill_color=color)
+        else:
+            if (lat, lon) in marked_locations.keys():
+                marked_locations[(lat, lon)].append(f"Грузополучатель {buyer_id}, " + add_text)
+            else:
+                marked_locations[(lat, lon)] = [f"Грузополучатель {buyer_id}, " + add_text]
+
+            for coords, messages in marked_locations.items():
+                if len(messages) == 1:
+                    text = messages[0]              
+                elif len(messages) <= 4:
+                    text = '; '.join(messages)                    
+                else:
+                    text = f"{len(messages)} заявок"
+                add_tack(coords[0], coords[1], text, map, fill_color=color)
 
 def lot_map(lot: pd.DataFrame) -> str:
     '''
-    Принимает DataFrame из заявок
+    Принимает DataFrame из заявок (лот)
     Отмечает всех грузополучателей красными кругами на карте
     Возвращает html-код карты в виде строки
     '''
     buyers = lot["Грузополучатель"]
-    f = folium.Figure(width='100%', height= 400)
-    mapa = folium.Map(location=(67., 93.), zoom_start=3, attributionControl=0).add_to(f)
+    mapa = folium.Map(location=(67., 93.), zoom_start=3, attributionControl=0)
     add_locations(buyers, mapa)
     return mapa._repr_html_()
 
@@ -44,9 +56,7 @@ def lots_map(lots: list):
     Отмечает кругами разного цвета грузополучателей в разных лотах
     Возвращает html-код карты в виде строки
     '''
-    f = folium.Figure(width='100%', height= 400)
-
-    mapa = folium.Map(location=(67., 93.), zoom_start=3, attributionControl=0).add_to(f)
+    mapa = folium.Map(location=(67., 93.), zoom_start=3, attributionControl=0)
     colors=[ "#FBF8CC",
         "#FDE4CF",
         "#FFCFD2",

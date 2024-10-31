@@ -148,16 +148,18 @@ def download(request):
         df_deliv = pd.read_excel('main/data/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
         df_cargo = pd.read_excel('main/data/Справочник грузополучателей.xlsx')
 
-        df_errors = preproc_delivery_time(data_input, df_mtr, df_deliv, df_cargo)
-        df_errors[df_errors['Ошибка'] > 0].to_excel('media/upldfile/Ошибочные_заявки.xlsx')
+        # df_errors = preproc_delivery_time(data_input, df_mtr, df_deliv, df_cargo)
+        # df_errors[df_errors['Ошибка'] > 0].to_excel('media/upldfile/Ошибочные_заявки.xlsx')
         print(name)
 
         wb = openpyxl.load_workbook('./media/' + name)
         ws = wb.active
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
 
-        # for i in range(20)
-
+        # for i in range(len(data_input)):
+        #     for j in range(15):
+        #         if data_input['№ заказа'].values[i] in df_errors[df_errors['Ошибка'] > 0]['№ заказа'].values:
+        #             ws[f'{abc[j]}{i+2}'].fill = openpyxl.styles.PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
     if name != "":
     
@@ -235,8 +237,8 @@ def download(request):
         
         #------------------- input file plots ---------------------------
 
-    if request.method == 'POST' and 'run_script_download' in request.POST:
-        return download_file(request, './media/upldfile/'+'Ошибочные_заявки.xlsx')
+        if request.method == 'POST' and 'run_script_download' in request.POST:
+            return download_file(request, './media/' + name)
     
         
     if name =="":

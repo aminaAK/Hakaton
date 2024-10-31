@@ -103,10 +103,5 @@ def lots_distr(input_path, metr=False):
     #delete redundant columns
     for i in range(len(lots)):
         lots[i] = lots[i].drop(columns=['dist', 'cluster'])
-
-    metr_dict = 0
-    
-    if metr:
-        return lots, metr_dict
-    else:
-        return data
+        
+    return data

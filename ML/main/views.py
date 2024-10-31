@@ -5,8 +5,8 @@ import pandas as pd
 from .models import MyFiles
 import folium
 # from .Tables import  request_lot, lots_from_requaest
-from .hacaton import Lot
-from .geo import lot_map
+from .hacaton_input import lots_distr
+from .geo import lots_map, lot_map
 import os
 import datetime #added by rita!
 from .input_file_preprocessing import preproc_delivery_time
@@ -17,7 +17,7 @@ name = ''
 
 def index(request):
     
-    data = Lot(name)
+    data = lots_distr(name)
     req = []
     for i in range(len(data)):
         lot = data[i]  #лот
@@ -33,23 +33,24 @@ def index(request):
         tables(request, row_id)
         return tables(request, row_id)
   
-
     # --------------- map --------------
-    df1 = pd.read_csv("main/city.csv")
-    df = df1[["city", "fias_level", "geo_lat", "geo_lon"]]
-    df = df.rename({"geo_lat":"lat", "geo_lon":"lon"}, axis=1)
-    def add_tack(lat, lon, text, level, map):
-        folium.Circle(
-            location=(lat, lon),
-            popup=text,
-            tooltip=text,
-            radius = 200/level
-        ).add_to(map)
-    f = folium.Figure(width='100%', height= 400)
-    mapa = folium.Map(location=(55., 37.)).add_to(f) #Москва
-    for _, row in df.iterrows():
-        add_tack(row["lat"], row["lon"], row["city"], row["fias_level"], mapa)
-    mapa = mapa._repr_html_()
+    mapa = lots_map(data)
+    # # --------------- map --------------
+    # df1 = pd.read_csv("main/city.csv")
+    # df = df1[["city", "fias_level", "geo_lat", "geo_lon"]]
+    # df = df.rename({"geo_lat":"lat", "geo_lon":"lon"}, axis=1)
+    # def add_tack(lat, lon, text, level, map):
+    #     folium.Circle(
+    #         location=(lat, lon),
+    #         popup=text,
+    #         tooltip=text,
+    #         radius = 200/level
+    #     ).add_to(map)
+    # f = folium.Figure(width='100%', height= 400)
+    # mapa = folium.Map(location=(55., 37.)).add_to(f) #Москва
+    # for _, row in df.iterrows():
+    #     add_tack(row["lat"], row["lon"], row["city"], row["fias_level"], mapa)
+    # mapa = mapa._repr_html_()
     # --------------- map --------------
 
     #------------------- input file plots ---------------------------
@@ -242,10 +243,10 @@ def download(request):
 #     os.remove('./media' + name)
 
 def tables(request, id):
-    data = Lot(name)
-  
+    data = lots_distr(name)
     lot = data[id]
-    return render(request, 'main/tables.html', {'id':id, 'lot':lot})
+    mapa = lot_map(lot)
+    return render(request, 'main/tables.html', {'map':mapa, 'id':id, 'lot':lot})
 
 
 def download_file(request, f):

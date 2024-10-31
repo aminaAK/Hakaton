@@ -116,11 +116,6 @@ def dist_cluster(data, cords_path, clients_path):
 
 
 def sell_cluster(data_orig, data_prepr, k, metrics=False):
-    from sklearn.preprocessing import LabelEncoder, StandardScaler
-    from sklearn.cluster import KMeans
-    import pandas as pd
-    import numpy as np
-    
     label_encoder = LabelEncoder()
     data_prepr['Код класса МТР'] = label_encoder.fit_transform(data_prepr['Код класса МТР'])
     data_prepr['Кредитор'] = label_encoder.fit_transform(data_prepr['Кредитор'])
@@ -130,82 +125,82 @@ def sell_cluster(data_orig, data_prepr, k, metrics=False):
     data = data_orig.copy()
     kmeans = KMeans(n_clusters=k, random_state=42)
     data['cluster'] = kmeans.fit_predict(data_scaled)
-
-    data['Код класса МТР'] = data['Код класса МТР'].astype(str)
-    data['pairs_per_clust'] = data.groupby('cluster')['Код класса МТР'].transform('nunique')
-    data['pairs_by_cred'] = data.groupby(['Поставщик', 'cluster'])['Код класса МТР'].transform('nunique')
-    data['perc_cov'] = (data['pairs_by_cred'] / data['pairs_per_clust']) * 100
-
-    def categorize_coverage(percentage):
-        if 80 > percentage >= 50:
-            return '≥ 50%'
-        elif 100 > percentage >= 80:
-            return '≥ 80%'
-        elif percentage == 100:
-            return '100%'
-        else:
-            return None  # Return None for percentages below 50%
-
-    data['cov_cat'] = data['perc_cov'].apply(categorize_coverage)
-
-    # Remove rows where 'cov_cat' is None to focus on defined categories
-    data_filtered = data.dropna(subset=['cov_cat'])
-
-    # Group and calculate the average number of creditors per category
-    creditor_counts_by_category = (
-        data_filtered.groupby(['cluster', 'cov_cat'])['Поставщик']
-        .nunique()
-        .reset_index(name='num_creditors')
-    )
-
-    avg_creditors_per_category = (
-        creditor_counts_by_category.groupby('cov_cat')['num_creditors']
-        .mean()
-        .reset_index()
-    )
-
-    # Helper function to get the mean or return 0 if category is missing
-    def get_avg_creditors(df, category_list):
-        selection = df[df['cov_cat'].isin(category_list)]
-        if not selection.empty:
-            return selection['num_creditors'].mean()
-        else:
-            return 0
-
-    # Calculate average creditors for each category
-    average_creditors_le_50 = get_avg_creditors(
-        avg_creditors_per_category, ['≥ 50%', '≥ 80%', '100%']
-    )
-    average_creditors_50_to_80 = get_avg_creditors(
-        avg_creditors_per_category, ['≥ 80%', '100%']
-    )
-    average_creditors_ge_80 = get_avg_creditors(
-        avg_creditors_per_category, ['100%']
-    )
-
-    # Calculate average creditors per lot, handle division by zero
-    average_creditors_per_lot = data.groupby('cluster')['Поставщик'].nunique().mean()
-    if average_creditors_per_lot == 0 or pd.isna(average_creditors_per_lot):
-        average_creditors_per_lot = 1  # Prevent division by zero
-
-    num_lots = data['cluster'].nunique()
-    average_price_per_lot = data.groupby('cluster')['План.цена с НДС'].sum().mean()
-    if average_price_per_lot == 0 or pd.isna(average_price_per_lot):
-        average_price_per_lot = 1  # Prevent division by zero
-
-    # Calculations as done manually
-    manual_avg_price = data.groupby('ID лота')['План.цена с НДС'].sum().mean()
-    manual_lot_count = data['ID лота'].nunique()
-    if manual_avg_price == 0 or pd.isna(manual_avg_price):
-        manual_avg_price = 1  # Prevent division by zero
-    if manual_lot_count == 0 or pd.isna(manual_lot_count):
-        manual_lot_count = 1  # Prevent division by zero
-
-    data = data.drop(
-        columns=['pairs_per_clust', 'pairs_by_cred', 'perc_cov', 'cov_cat']
-    )
-
+    
     if metrics:
+        data['Код класса МТР'] = data['Код класса МТР'].astype(str)
+        data['pairs_per_clust'] = data.groupby('cluster')['Код класса МТР'].transform('nunique')
+        data['pairs_by_cred'] = data.groupby(['Поставщик', 'cluster'])['Код класса МТР'].transform('nunique')
+        data['perc_cov'] = (data['pairs_by_cred'] / data['pairs_per_clust']) * 100
+
+        def categorize_coverage(percentage):
+            if 80 > percentage >= 50:
+                return '≥ 50%'
+            elif 100 > percentage >= 80:
+                return '≥ 80%'
+            elif percentage == 100:
+                return '100%'
+            else:
+                return None  # Return None for percentages below 50%
+
+        data['cov_cat'] = data['perc_cov'].apply(categorize_coverage)
+
+        # Remove rows where 'cov_cat' is None to focus on defined categories
+        data_filtered = data.dropna(subset=['cov_cat'])
+
+        # Group and calculate the average number of creditors per category
+        creditor_counts_by_category = (
+            data_filtered.groupby(['cluster', 'cov_cat'])['Поставщик']
+            .nunique()
+            .reset_index(name='num_creditors')
+        )
+
+        avg_creditors_per_category = (
+            creditor_counts_by_category.groupby('cov_cat')['num_creditors']
+            .mean()
+            .reset_index()
+        )
+
+        # Helper function to get the mean or return 0 if category is missing
+        def get_avg_creditors(df, category_list):
+            selection = df[df['cov_cat'].isin(category_list)]
+            if not selection.empty:
+                return selection['num_creditors'].mean()
+            else:
+                return 0
+
+        # Calculate average creditors for each category
+        average_creditors_le_50 = get_avg_creditors(
+            avg_creditors_per_category, ['≥ 50%', '≥ 80%', '100%']
+        )
+        average_creditors_50_to_80 = get_avg_creditors(
+            avg_creditors_per_category, ['≥ 80%', '100%']
+        )
+        average_creditors_ge_80 = get_avg_creditors(
+            avg_creditors_per_category, ['100%']
+        )
+
+        # Calculate average creditors per lot, handle division by zero
+        average_creditors_per_lot = data.groupby('cluster')['Поставщик'].nunique().mean()
+        if average_creditors_per_lot == 0 or pd.isna(average_creditors_per_lot):
+            average_creditors_per_lot = 1  # Prevent division by zero
+
+        num_lots = data['cluster'].nunique()
+        average_price_per_lot = data.groupby('cluster')['План.цена с НДС'].sum().mean()
+        if average_price_per_lot == 0 or pd.isna(average_price_per_lot):
+            average_price_per_lot = 1  # Prevent division by zero
+
+        # Calculations as done manually
+        manual_avg_price = data.groupby('ID лота')['План.цена с НДС'].sum().mean()
+        manual_lot_count = data['ID лота'].nunique()
+        if manual_avg_price == 0 or pd.isna(manual_avg_price):
+            manual_avg_price = 1  # Prevent division by zero
+        if manual_lot_count == 0 or pd.isna(manual_lot_count):
+            manual_lot_count = 1  # Prevent division by zero
+
+        data = data.drop(
+            columns=['pairs_per_clust', 'pairs_by_cred', 'perc_cov', 'cov_cat']
+        )
+        
         # Calculate MQ, handle potential division by zero
         MQ = 0.5 * (
             (1 - num_lots / manual_lot_count)
@@ -226,31 +221,36 @@ def sell_cluster(data_orig, data_prepr, k, metrics=False):
         return data
 
 
-def optim_clust(data_orig, data_prepr):
+def optim_clust(data_orig, data_prepr, metrics=False):
     k_best = None
     MS_best = float('-inf')
     MQ_best = float('-inf')
     data_best = None
 
-    max_k = max(2, data_orig['Поставщик'].nunique() * 2)
-    for k in range(1, max_k):
-        try:
-            data_clustered, metr = sell_cluster(data_orig, data_prepr, k, metrics=True)
-            # print(f"k={k}, MQ={metr['MQ']}, MS={metr['MS']}")
-            
-            if metr['MS'] > MS_best:
-                k_best = k
-                MS_best = metr['MS']
-                MQ_best = metr['MQ']
-                data_best = data_clustered.copy()
+    max_k = max(2, data_prepr['Код класса МТР'].nunique() * 2)
+    
+    if metrics:
+        for k in range(1, max_k):
+            try:
+                data_clustered, metr = sell_cluster(data_orig, data_prepr, k, metrics=metrics)
+                # print(f"k={k}, MQ={metr['MQ']}, MS={metr['MS']}")
+                
+                if metr['MS'] > MS_best:
+                    k_best = k
+                    MS_best = metr['MS']
+                    MQ_best = metr['MQ']
+                    data_best = data_clustered.copy()
 
-            if metr['MQ'] < 0.5:
-                print(f"Optimal clustering found with k={k_best}, MQ={MQ_best}, MS={MS_best}")
-                break  # Exit the loop when criteria are satisfied
+                if metr['MQ'] < 0.5:
+                    print(f"Optimal clustering found with k={k_best}, MQ={MQ_best}, MS={MS_best}")
+                    break  # Exit the loop when criteria are satisfied
 
-        except Exception as e:
-            print(f"Error clustering with k={k}: {e}")
-            continue
+            except Exception as e:
+                print(f"Error clustering with k={k}: {e}")
+                continue
+    else:
+        k_best = max_k
+        data_best = sell_cluster(data_orig, data_prepr, k_best, metrics=metrics)
 
     if data_best is None:
         data_best = data_orig.copy()

@@ -289,7 +289,7 @@ def preproc_delivery_time(
   pd.DataFrame: preprocessed input file.
   """
   res = df_in.copy()
-  res = res.drop(columns='Unnamed: 0')
+#   res = res.drop(columns='Unnamed: 0')
   res['Код класса МТР'] = ''
   res['Доставка: да/нет'] = ''
   res['Ошибка'] = 0

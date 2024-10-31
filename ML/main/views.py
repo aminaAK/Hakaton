@@ -10,7 +10,7 @@ from .geo import lots_map, lot_map
 import os
 import datetime #added by rita!
 from .input_file_preprocessing import preproc_delivery_time
-
+import openpyxl
 
 
 name = ''
@@ -92,7 +92,7 @@ def index(request):
     data_4 = [{"label": f"{labels_2[i]}", "y": int(counts_2[i])} for i in range(len(labels_2))]
 
     #для графика по классам товаров
-    df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
+    df_mtr = pd.read_excel('main/data/Кабель справочник МТР.xlsx')
     data_input['Название класса МТР'] = ''
     for ind in data_input.index:
         material = data_input['Материал'][ind]
@@ -144,13 +144,20 @@ def download(request):
         )
         name = f.file.name
         data_input = pd.read_excel('./media/'+name) #здесь должен быть входной файл!!!
-        df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
-        df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
-        df_cargo = pd.read_excel('main/Справочник грузополучателей.xlsx')
+        df_mtr = pd.read_excel('main/data/Кабель справочник МТР.xlsx')
+        df_deliv = pd.read_excel('main/data/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
+        df_cargo = pd.read_excel('main/data/Справочник грузополучателей.xlsx')
 
         df_errors = preproc_delivery_time(data_input, df_mtr, df_deliv, df_cargo)
         df_errors[df_errors['Ошибка'] > 0].to_excel('media/upldfile/Ошибочные_заявки.xlsx')
         print(name)
+
+        wb = openpyxl.load_workbook('./media/' + name)
+        ws = wb.active
+        abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+
+        # for i in range(20)
+
 
     if name != "":
     
@@ -193,7 +200,7 @@ def download(request):
         data_4 = [{"label": f"{labels_2[i]}", "y": int(counts_2[i])} for i in range(len(labels_2))]
 
         #для графика по классам товаров
-        df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
+        df_mtr = pd.read_excel('main/data/Кабель справочник МТР.xlsx')
         data_input['Название класса МТР'] = ''
         for ind in data_input.index:
             material = data_input['Материал'][ind]

@@ -14,10 +14,10 @@ def lots_distr(input_path, metr=False):
     
     
     #change these paths to your local ones when adding!
-    hist_path = 'main/Исторические_совершенные_закупки_товаров.csv'
-    df_mtr = pd.read_excel('main/Кабель справочник МТР.xlsx')
-    df_deliv = pd.read_excel('main/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
-    df_cargo = pd.read_excel('main/Справочник грузополучателей.xlsx')
+    hist_path = 'main/data/Исторические_совершенные_закупки_товаров.csv'
+    df_mtr = pd.read_excel('main/data/Кабель справочник МТР.xlsx')
+    df_deliv = pd.read_excel('main/data/КТ-516 Разделительная ведомость на поставку МТР с учетом нормативных сроков поставки.xlsx', header=23)
+    df_cargo = pd.read_excel('main/data/Справочник грузополучателей.xlsx')
         
     data = preproc_delivery_time(data_input, df_mtr, df_deliv, df_cargo)
     data_hist = pd.read_csv(hist_path)
@@ -43,8 +43,8 @@ def lots_distr(input_path, metr=False):
         datasets_preprocessed[Class] = time_borders(datasets_preprocessed[Class])
     
     #make clusters for each distance group (list inside previously mentioned list) 
-    cords_path = 'main/cwc.csv'
-    clients_path = 'main/clients.csv'
+    cords_path = 'main/data/cwc.csv'
+    clients_path = 'main/data/clients.csv'
     error_lines = []
     ds_dist = datasets.copy()
     ds_pr_dist = datasets_preprocessed.copy()

@@ -1,7 +1,7 @@
 import pandas as pd
 import folium
 
-clients = pd.read_csv("main/clients_with_location.csv")
+clients = pd.read_csv("main/data/clients_with_location.csv")
 def add_tack(lat, lon, text, map, radius=20, fill_color='blue'):
     #popup - при нажатии, tooltip - при наведении
     folium.CircleMarker(

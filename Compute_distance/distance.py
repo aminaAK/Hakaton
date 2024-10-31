@@ -28,7 +28,7 @@ def distance(id_cr: 'int',
         su_city = su[su['Кредитор'] == str(id_cr)]['Город'].values[0]
         cl_city = cl[cl['buyer'] == id_buy]['city'].values[0]
     except:
-        print('\033[91mТакого кредитора/покупателя нет в базе')
+        print('\033[91mТакого кредитора/покупателя нет в базе')  # \033[91m делает текст красным
         return -1
         
     lat1, lon1 = coords[coords['city'] == su_city][['lat', 'lon']].values[0]

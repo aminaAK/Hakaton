@@ -65,7 +65,7 @@ def index(request):
 
     #для кругового графика кол-ва поставок по годам
     years = data_input['Год поставки'].unique()
-    data_1 = [{"label": f"{year}", "y": int(data_input[data_input['Год поставки'] == year]['№ заказа'].count())} for year in years]
+    data_1 = [{"label": f"{year}", "y": int(data_input[data_input['Год поставки'] == year]['№ заказа'].count()/data_input['№ заказа'].count()*100)} for year in years]
 
     #для столбчатого графика кол-ва заявок по месяцам (срок поставки)
     months = [i for i in range(1, 13)]
@@ -79,7 +79,7 @@ def index(request):
 
     #для кругового графика кол-ва заявок по годам
     years = data_input['Год заявки'].unique()
-    data_3 = [{"label": f"{year}", "y": int(data_input[data_input['Год заявки'] == year]['№ заказа'].count())} for year in years]
+    data_3 = [{"label": f"{year}", "y": int(data_input[data_input['Год заявки'] == year]['№ заказа'].count()/data_input['№ заказа'].count()*100)} for year in years]
 
     #для столбчатого графика кол-ва заявок по месяцам (срок заявки)
     months = [i for i in range(1, 13)]
@@ -96,8 +96,9 @@ def index(request):
     data_input['Название класса МТР'] = ''
     for ind in data_input.index:
         material = data_input['Материал'][ind]
-        code = df_mtr[df_mtr['Материал'] == material]['Название'].values[0]
-    data_input.loc[ind, 'Название класса МТР'] = code
+        if len(df_mtr[df_mtr['Материал'] == material]['Название'].values) > 0:
+            code = df_mtr[df_mtr['Материал'] == material]['Название'].values[0]
+            data_input.loc[ind, 'Название класса МТР'] = code
     class_code = data_input['Название класса МТР'].unique()
     class_count = []
     for cl_c in class_code:
@@ -106,10 +107,10 @@ def index(request):
     class_count_sorted =sorted(class_count)
     if len(class_code) > 10:
         other_count = sum(class_count_sorted[:-10])
-        data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i])} for i in range(-10, 0)]
-        data_5.append({"label": "Другие", "y": int(other_count)})
+        data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i]/sum(class_count_sorted)*100)} for i in range(-10, 0)]
+        data_5.append({"label": "Другие", "y": int(other_count/sum(class_count_sorted)*100)})
     else:
-        data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i])} for i in range(len(class_code_sorted))]
+        data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i]/sum(class_count_sorted)*100)} for i in range(len(class_code_sorted))]
     
     #для графика по клиентам
     cargo_code = data_input['Клиент'].unique()
@@ -120,10 +121,10 @@ def index(request):
     cargo_count_sorted =sorted(cargo_count)
     if len(cargo_code) > 10:
         other_count = sum(cargo_count_sorted[:-10])
-        data_6 = [{"label": f"Клиент {str(cargo_code_sorted[i])}", "y": int(cargo_count_sorted[i])} for i in range(-10, 0)]
-        data_6.append({"label": "Другие", "y": int(other_count)})
+        data_6 = [{"label": f"Клиент {str(cargo_code_sorted[i])}", "y": int(cargo_count_sorted[i]/sum(cargo_count_sorted)*100)} for i in range(-10, 0)]
+        data_6.append({"label": "Другие", "y": int(other_count/sum(cargo_count_sorted)*100)})
     else:
-        data_6 = [{"label": str(cargo_code_sorted[i]), "y": int(cargo_count_sorted[i])} for i in range(len(cargo_code_sorted))]
+        data_6 = [{"label": str(cargo_code_sorted[i]), "y": int(cargo_count_sorted[i]/sum(cargo_count_sorted)*100)} for i in range(len(cargo_code_sorted))]
     #------------------- input file plots ---------------------------
 
 
@@ -175,7 +176,7 @@ def download(request):
 
         #для кругового графика кол-ва поставок по годам
         years = data_input['Год поставки'].unique()
-        data_1 = [{"label": f"{year}", "y": int(data_input[data_input['Год поставки'] == year]['№ заказа'].count())} for year in years]
+        data_1 = [{"label": f"{year}", "y": int(data_input[data_input['Год поставки'] == year]['№ заказа'].count()/data_input['№ заказа'].count()*100)} for year in years]
 
         #для столбчатого графика кол-ва заявок по месяцам (срок поставки)
         months = [i for i in range(1, 13)]
@@ -189,7 +190,7 @@ def download(request):
 
         #для кругового графика кол-ва заявок по годам
         years = data_input['Год заявки'].unique()
-        data_3 = [{"label": f"{year}", "y": int(data_input[data_input['Год заявки'] == year]['№ заказа'].count())} for year in years]
+        data_3 = [{"label": f"{year}", "y": int(data_input[data_input['Год заявки'] == year]['№ заказа'].count()/data_input['№ заказа'].count()*100)} for year in years]
 
         #для столбчатого графика кол-ва заявок по месяцам (срок заявки)
         months = [i for i in range(1, 13)]
@@ -206,8 +207,9 @@ def download(request):
         data_input['Название класса МТР'] = ''
         for ind in data_input.index:
             material = data_input['Материал'][ind]
-            code = df_mtr[df_mtr['Материал'] == material]['Название'].values[0]
-        data_input.loc[ind, 'Название класса МТР'] = code
+            if len(df_mtr[df_mtr['Материал'] == material]['Название'].values) > 0:
+                code = df_mtr[df_mtr['Материал'] == material]['Название'].values[0]
+                data_input.loc[ind, 'Название класса МТР'] = code
         class_code = data_input['Название класса МТР'].unique()
         class_count = []
         for cl_c in class_code:
@@ -216,10 +218,10 @@ def download(request):
         class_count_sorted =sorted(class_count)
         if len(class_code) > 10:
             other_count = sum(class_count_sorted[:-10])
-            data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i])} for i in range(-10, 0)]
-            data_5.append({"label": "Другие", "y": int(other_count)})
+            data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i]/sum(class_count_sorted)*100)} for i in range(-10, 0)]
+            data_5.append({"label": "Другие", "y": int(other_count/sum(class_count_sorted)*100)})
         else:
-            data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i])} for i in range(len(class_code_sorted))]
+            data_5 = [{"label": class_code_sorted[i], "y": int(class_count_sorted[i]/sum(class_count_sorted)*100)} for i in range(len(class_code_sorted))]
         
         #для графика по клиентам
         cargo_code = data_input['Клиент'].unique()
@@ -230,10 +232,10 @@ def download(request):
         cargo_count_sorted =sorted(cargo_count)
         if len(cargo_code) > 10:
             other_count = sum(cargo_count_sorted[:-10])
-            data_6 = [{"label": f"Клиент {str(cargo_code_sorted[i])}", "y": int(cargo_count_sorted[i])} for i in range(-10, 0)]
-            data_6.append({"label": "Другие", "y": int(other_count)})
+            data_6 = [{"label": f"Клиент {str(cargo_code_sorted[i])}", "y": int(cargo_count_sorted[i]/sum(cargo_count_sorted)*100)} for i in range(-10, 0)]
+            data_6.append({"label": "Другие", "y": int(other_count/sum(cargo_count_sorted)*100)})
         else:
-            data_6 = [{"label": str(cargo_code_sorted[i]), "y": int(cargo_count_sorted[i])} for i in range(len(cargo_code_sorted))]
+            data_6 = [{"label": str(cargo_code_sorted[i]), "y": int(cargo_count_sorted[i]/sum(cargo_count_sorted)*100)} for i in range(len(cargo_code_sorted))]
         
         #------------------- input file plots ---------------------------
 
